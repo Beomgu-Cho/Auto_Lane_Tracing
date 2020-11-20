@@ -437,7 +437,7 @@
   cv2.destroyAllWindows()
   cap.release()
 ```
-### 최종 코드
+# 최종 코드
 ```
 import cv2
 import numpy as np
