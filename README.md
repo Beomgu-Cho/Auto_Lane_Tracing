@@ -73,7 +73,9 @@
     
     cv2.imshow('result', frame)
 ```
-![screenshots 1.video_capture.png](https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/1.video_capture.png)
+<img width="400" src="https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/1.video_capture.png">
+
+
 #### 정상적으로 영상이 잘 출력됩니다.
 ### 1-3. Frame Delay Check
 #### time 라이브러리를 이용하여 쉽게 체크가 가능합니다.
@@ -160,10 +162,16 @@
     print("frame took: {}".format(time.time() - last_time))
     last_time = time.time()
 ```
-![screenshots 3.gray.png](https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/3.gray.png)
-![screenshots 4.binary.png](https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/4.binary.png)
-![screenshots 5.blur.png](https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/5.blur.png)
-![screenshots 6.canny.png](https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/6.canny.png)
+<div>
+  <img width="400" src="https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/3.gray.png">
+  <img width="400" src="https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/4.binary.png">
+</div>
+<div>
+  <img width="400" src="https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/5.blur.png">
+  <img width="400" src="https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/6.canny.png">
+</div>
+
+
 ### 2-3. Region Of Interest
 #### 관심 영역을 지정합니다.
 #### 대부분의 경우 관심영역 외의 부분을 빈공간으로 처리하는 경우가 대부분이었는데 이 경우 라인의 각도가 조금밖에 이루어지지 않는 것같아 최대한 실제 라인과 비슷한 환경을 만들어 주기 위해 위에서 바라보는 화면을 만들어 주었습니다.
@@ -198,6 +206,7 @@
 ```
 #### OpenCV가 아닌 Matplotlib.pyplot을 이용하여 출력하면 화면에 한 프레임의 이미지가 올라오게 되는데 이 때 마우스를 이미지에 가져다대면 마우스 끝이 있는 해당 셀의 (x, y) 좌표를 확인할 수 있습니다.
 ###### 저의 경우 차례대로 `[300, 650], [580, 460], [720, 460], [1100, 650]` 가 나왔습니다.
+![screenshots 7.matplot.png](https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/7.matplot.PNG)
 ### 새 윈도우창 설정
 #### 이제 upper_view 를 출력할 윈도우의 설정값을 지정해 줍니다.
 ```
@@ -222,6 +231,9 @@
 ```
   img2 = cv2.warpPerspective(frame, M, (w, h), borderValue=(255, 255, 255))
 ```
+<img width="400" src="https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/8.img2.png">
+
+
 #### 이제 upper_view 화면이 정상적으로 출력이 가능합니다.
 ```
   # 라이브러리 참조
@@ -418,6 +430,10 @@
 
   combo_image = cv2.addWeighted(img2, 1, line_image, 0.6, 1)
 ```
+<div>
+  <img width="400" src="https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/9.line_image.png">
+  <img width="400" src="https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/10.combo_image.png">
+</div>
 #### line_image 는 각각 좌, 우측 라인이미지를 합한 것,
 #### combo_image 는 line_image 와 img2 의 이미지를 합친 것입니다.
 #### combo_image 에서 0.6 에 해당하는 부분이 line_image를 반투명하게 설정한 것입니다. 1 일 때 완전 불투명입니다.
@@ -435,6 +451,7 @@
   else:
       print("straight")
 ```
+![screenshots 11.check_lane.png](https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/11.check_lane.PNG)
 #### 좌, 우측의 x2 좌표값의 평균을 기준으로 중앙에서 벗어난 정도를 체크했습니다.
 #### 결과 정상적으로 출력이 됩니다.
 ## 3. 결과
@@ -570,6 +587,185 @@ while(True):
 
 cv2.destroyAllWindows()
 cap.release()
+```
+
+## 감사합니다.
+
+---------
+###### 업로드된 파일의 코드는 오차를 수정하기 위해 다소 바뀐 부분이 있으나 지저분한 관계로 내용에서 제거하였습니다.
+###### 수정된 내용
+#### 1. l1과 l2의 값이 갑작스럽게 크게 바뀌는 경우 에러라고 판단하고 이전의 값을 가지고 그대로 사용하였습니다.
+###### 그러기 위해 l1과 l2의 값을 백업할 변수 l1_copy, l2_copy를 만들었습니다.
+#### 2. 간혹 좌표값 반환 과정에서 에러가 생겨 try 문으로 묶은 뒤 에러 발생 시 return 값을 0 으로 만들고 해당 값이 0 일 경우 무시하고 진행할 수 있게 수정하였습니다. 
+```
+  import cv2
+  import numpy as np
+  import time
+
+
+  def make_coordinates(img, line_parameters):
+      slope, intercept = line_parameters
+
+      y1 = img.shape[0]
+      y2 = int(y1 * (1/2))
+
+      x1 = int((y1 - intercept)/slope)
+      x2 = int((y2 - intercept)/slope)
+
+      return np.array([x1, y1, x2, y2])
+
+
+  def average_slope_intercept(img, lines):
+
+      left_fit = []
+      right_fit = []
+
+      for line in lines:
+          x1, y1, x2, y2 = line.reshape(4)
+
+          x = np.array([x1, x2])
+          y = np.array([y1, y2])
+          A = np.vstack([x, np.ones(len(x))]).T
+
+          slope, intercept = np.linalg.lstsq(A, y, rcond=None)[0]
+
+          x_coord = -((intercept-640) / slope)
+
+          if x_coord < 400:
+              left_fit.append((slope, intercept))
+
+          elif x_coord > 400:
+              right_fit.append((slope, intercept))
+
+      left_fit_average = np.mean(left_fit, 0)
+      right_fit_average = np.mean(right_fit, 0)
+
+      try:
+          left_line = make_coordinates(img, left_fit_average)
+          right_line = make_coordinates(img, right_fit_average)
+
+      except:
+          left_line = 0
+          right_line = 0
+          pass
+
+      return [left_line], [right_line]
+
+
+  def display_lines(img, lines):
+      line_image = np.zeros_like(img)
+
+      if lines is not None:
+          for line in lines:
+              x1, y1, x2, y2 = line.reshape(4)
+              cv2.line(line_image, (x1, y1), (x2, y2), (255, 0, 0), 20)
+
+      return line_image
+
+
+  def make_canny(img):
+      gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+      _, binary = cv2.threshold(gray, 197, 255, cv2.THRESH_BINARY)
+      binary_gaussian = cv2.adaptiveThreshold(binary, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 5)
+      blur = cv2.GaussianBlur(binary_gaussian, (5, 5), 0)
+      blur = cv2.bilateralFilter(blur, 9, 75, 75)
+
+      canny_image = cv2.Canny(blur, 80, 120)
+
+      return canny_image
+
+
+  cap = cv2.VideoCapture('project_video.mp4')
+  last_time = time.time()
+
+  h = 640
+  w = 800
+  pts1 = np.float32([[300, 650], [580, 460], [720, 460], [1100, 650]])
+  pts2 = np.float32([[200, 640], [200, 0], [600, 0], [600, 640]])
+  M = cv2.getPerspectiveTransform(pts1, pts2)
+
+  l1 = 0
+  l2 = 0
+  l1_copy = None
+  l2_copy = None
+
+  x2_coord_average = 400
+
+  while(True):
+      ret, frame = cap.read()
+      img2 = cv2.warpPerspective(frame, M, (w, h), borderValue=(255, 255, 255))
+
+      try:
+          canny = make_canny(img2)
+          lines = cv2.HoughLinesP(canny, 3, np.pi/180, 100, np.array([]), 100, 400)
+
+          print(len(lines))
+
+          if l1 == 0 and l2 == 0:
+              l1, l2 = average_slope_intercept(canny, lines)
+          else:
+              l1_copy, l2_copy = average_slope_intercept(canny, lines)
+
+          if l1_copy is not None:
+              try:
+                  if l1_copy[0][0] > l1[0][0] + 20 or l1_copy[0][0] < l1[0][0] - 20:
+                      l1 = l1
+                  else:
+                      l1 = l1_copy
+
+                  if l2_copy is not None:
+                      if l2_copy[0][0] > l2[0][0] + 20 or l2_copy[0][0] < l2[0][0] - 20:
+                          l2 = l2
+                      else:
+                          l2 = l2_copy
+
+              except:
+                  pass
+
+          elif l1_copy is None:
+              try:
+                  if l2_copy is not None:
+                      if l2_copy[0][0] > l2[0][0] + 20 or l2_copy[0][0] < l2[0][0] - 20:
+                          l2 = l2
+                      else:
+                          l2 = l2_copy
+
+              except:
+                  pass
+
+          x2_coord_average = (l2[0][2] + l1[0][2]) / 2
+
+          turning_rate = x2_coord_average - 400
+
+          if turning_rate < -10:
+              print("left")
+          elif turning_rate > 10:
+              print("right")
+          else:
+              print("straight")
+
+          left_line_image = display_lines(img2, np.array(l1))
+          right_line_image = display_lines(img2, np.array(l2))
+
+          line_image = cv2.addWeighted(left_line_image, 1, right_line_image, 1, 1)
+
+          combo_image = cv2.addWeighted(img2, 1, line_image, 0.6, 1)
+
+          print('Frame took{}'.format(time.time() - last_time))
+          last_time = time.time()
+          cv2.imshow('frame', frame)
+          cv2.imshow('img2', img2)
+          cv2.imshow('result', combo_image)
+          cv2.imshow('canny', canny)
+
+      except:
+          pass
+
+      if cv2.waitKey(1) & 0xFF == 27:
+          break
+
+  cv2.destroyAllWindows()
+  cap.release()
 ```
 
 ## 감사합니다.
