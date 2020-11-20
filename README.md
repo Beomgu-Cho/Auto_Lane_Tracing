@@ -430,15 +430,16 @@
 
   combo_image = cv2.addWeighted(img2, 1, line_image, 0.6, 1)
 ```
+#### line_image 는 각각 좌, 우측 라인이미지를 합한 것,
+#### combo_image 는 line_image 와 img2 의 이미지를 합친 것입니다.
+#### combo_image 에서 0.6 에 해당하는 부분이 line_image를 반투명하게 설정한 것입니다. 1 일 때 완전 불투명입니다.
+
 <div>
   <img width="400" src="https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/9.line_image.png">
   <img width="400" src="https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/10.combo_image.png">
 </div>
 
 
-#### line_image 는 각각 좌, 우측 라인이미지를 합한 것,
-#### combo_image 는 line_image 와 img2 의 이미지를 합친 것입니다.
-#### combo_image 에서 0.6 에 해당하는 부분이 line_image를 반투명하게 설정한 것입니다. 1 일 때 완전 불투명입니다.
 ### 2-6. 결과 확인하기
 #### 눈으로 보이는 결과를 이용하여 차선의 방향, 차량이 가야하는 방향을 출력해보았습니다.
 ```
