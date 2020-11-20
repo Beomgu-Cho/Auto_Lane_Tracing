@@ -8,10 +8,14 @@
 #### OpenCV 4.1.2 ver
 #### 기타 라이브러리 matplotlib, numpy, time 등
 #### PyCharm 가상환경
+
+
 <div>
   <img width="300" src="https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/python.png">
   <img width="300" src="https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/opencv.png">
 </div>
+
+
 ----------
 # Lane_Tracing
 ### 자율주행의 핵심 기술이 되는 차선인식 및 추적기술 입니다.
