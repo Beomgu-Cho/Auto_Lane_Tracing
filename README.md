@@ -558,5 +558,5 @@ while(True):
 cv2.destroyAllWindows()
 cap.release()
 ```
-### 이상입니다.
+
 ## 감사합니다.
