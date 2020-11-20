@@ -283,3 +283,28 @@
 ```
 #### 실제 노면에서 검출되는 직선들은 차선뿐만 아니라 노면의 울퉁불퉁한 정도에 따라 이상한 직선들이 검출되기도 하고 옆차선을 달리는 자동차에서도 검출될 수 있습니다.
 #### 따라서, 각도가 어느정도 일치하는 직선들만 검출할 필요가 있습니다.
+#### 각도에 관한 정보는 따로 없으니 좌표를 계산하여 각도를 도출했습니다.
+```
+  for line in lines:
+     x1, y1, x2, y2 = line.reshape(4)
+
+     x = np.array([x1, x2])
+     y = np.array([y1, y2])
+     A = np.vstack([x, np.ones(len(x))]).T
+
+     slope, intercept = np.linalg.lstsq(A, y, rcond=None)[0]
+```
+#### lines의 각 요소마다 계산을 실시합니다.
+#### (x1, y1), (x2, y2) 좌표를 지나는 직선의 방정식을 구하고 x절편(기울기), y절편을 각각 slope와 intercept 변수에 저장합니다.
+#### y = 0 일 때의 x 좌표 즉, (x`, 0)의 값(x_coord)으로 직선의 시작점을 기준으로 좌측 직선과 우측 직선을 구분합니다.
+#### 구분한 직선을 미리 만들어놓은 알맞은 배열에 넣습니다.
+
+```
+     x_coord = -((intercept-640) / slope)
+
+     if x_coord < 400:
+         left_fit.append((slope, intercept))
+
+     elif x_coord > 400:
+         right_fit.append((slope, intercept))
+```
