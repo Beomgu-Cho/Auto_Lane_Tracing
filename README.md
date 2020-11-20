@@ -83,7 +83,7 @@
     ret, frame = cap.read()
     
     cv2.imshow('result', frame)
-    printf("frame took: {}".format(time.time() - last_time))
+    print("frame took: {}".format(time.time() - last_time))
     last_time = time.time()
 ```
 ###### `(time.time() - last_time)/60` 으로 하면 fps 체크가 가능합니다.
@@ -148,7 +148,7 @@
     canny = make_canny(frame)
     
     cv2.imshow('result', canny)
-    printf("frame took: {}".format(time.time() - last_time))
+    print("frame took: {}".format(time.time() - last_time))
     last_time = time.time()
 ```
 ### 2-3. Region Of Interest
@@ -247,7 +247,7 @@
     canny = make_canny(img2)
     
     cv2.imshow('result', canny)
-    printf("frame took: {}".format(time.time() - last_time))
+    print("frame took: {}".format(time.time() - last_time))
     last_time = time.time()
 ```
 ### 2-4. HoughLines 기법
@@ -271,7 +271,7 @@
     lines = cv2.HoughLinesP(canny, 3, np.pi/180, 100, np.array([]), 100, 400)
     
     cv2.imshow('result', canny)
-    printf("frame took: {}".format(time.time() - last_time))
+    print("frame took: {}".format(time.time() - last_time))
     last_time = time.time()
 ```
 ###### lines 변수는 직선들의 좌표 정보만을 가지고 있기 때문에 이것만으로 출력이 불가능 합니다.
