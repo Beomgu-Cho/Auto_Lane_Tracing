@@ -434,6 +434,8 @@
   <img width="400" src="https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/9.line_image.png">
   <img width="400" src="https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/10.combo_image.png">
 </div>
+
+
 #### line_image 는 각각 좌, 우측 라인이미지를 합한 것,
 #### combo_image 는 line_image 와 img2 의 이미지를 합친 것입니다.
 #### combo_image 에서 0.6 에 해당하는 부분이 line_image를 반투명하게 설정한 것입니다. 1 일 때 완전 불투명입니다.
@@ -591,6 +593,7 @@ cap.release()
 
 ## 감사합니다.
 
+---------
 ---------
 ###### 업로드된 파일의 코드는 오차를 수정하기 위해 다소 바뀐 부분이 있으나 지저분한 관계로 내용에서 제거하였습니다.
 ###### 수정된 내용
