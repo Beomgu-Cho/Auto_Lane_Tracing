@@ -173,7 +173,7 @@
       return canny
 
 
-  cap = cv2.VideoCapture(0)
+  cap = cv2.VideoCapture('project_video.mp4')
 
   while(True):
       _, frame = cap.read()
