@@ -23,8 +23,8 @@
 #### 이 프로젝트의 경우 기능 구현에 초점을 맞추었기 때문에 카메라를 통해 간단하게 기능을 구현하였습니다.
 ![screenshots autu_drive.png](https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/auto_drive.jpg)
 ## opencv 라이브러리 설치
-#### pip 명령어를 이용하여 설치가 가능합니다.
-### 단, Linux OS 라면 다른 방법을 이용해야 합니다.
+### pip 명령어를 이용하여 설치가 가능합니다.
+##### 단, Linux OS 라면 다른 방법을 이용해야 합니다.
 ```
   [terminal]> pip install opencv-python
   [terminal]> pip install opencv-contrib-python
