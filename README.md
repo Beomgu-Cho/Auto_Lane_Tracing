@@ -308,3 +308,255 @@
      elif x_coord > 400:
          right_fit.append((slope, intercept))
 ```
+#### 400 전, 후로 비교한 이유는 표시될 윈도우의 너비가 800 이기 때문에 중간지점인 400을 기준으로 왼쪽 오른쪽으로 나누었습니다.
+#### 입력된 배열의 모든 요소의 평균을 저장합니다.
+```
+    left_fit_average = np.mean(left_fit, 0)
+    right_fit_average = np.mean(right_fit, 0)
+```
+#### 지금 계산한 직선의 평균들은 `slope`와 'intercept'의 값을 가지는 데이터입니다.
+#### 이제 이 데이터를 이용하여 직선을 만들기 위해 다시 x1, y1, x2, y2 값을 추출합니다.
+```
+    slope, intercept = line_parameters
+
+    y1 = img.shape[0]
+    y2 = int(y1 * (1/2))
+
+    x1 = int((y1 - intercept)/slope)
+    x2 = int((y2 - intercept)/slope)
+```
+#### line_parameters 는 각각 left_fit_average, right_fit_average가 들어가고 img는 출력할 이미지에 해당합니다. img.shape[0] 대신 640을 넣어도 됩니다.
+###### img.shape[0]는 해당 이미지의 높이값입니다.
+#### 여기서 y1, y2의 값은 화면상에 표시하기 위해 고정된 값으로 두었고 x1, x2는 y1, y2에 해당하는 위치의 x좌표를 구한 결과값입니다.
+#### 코드 생성물
+```
+  # 좌측, 우측 선분의 평균값을 가진 데이터를 이용해 좌표 추출
+  def make_coordinates(img, line_parameters):
+      slope, intercept = line_parameters
+
+      y1 = img.shape[0]
+      y2 = int(y1 * (1/2))
+
+      x1 = int((y1 - intercept)/slope)
+      x2 = int((y2 - intercept)/slope)
+
+      return np.array([x1, y1, x2, y2])
+  # 추출한 선분들을 좌측, 우측으로 나누고 좌표 추출
+  def average_slope_intercept(img, lines):
+
+      left_fit = []
+      right_fit = []
+
+      for line in lines:
+          x1, y1, x2, y2 = line.reshape(4)
+
+          x = np.array([x1, x2])
+          y = np.array([y1, y2])
+          A = np.vstack([x, np.ones(len(x))]).T
+
+          slope, intercept = np.linalg.lstsq(A, y, rcond=None)[0]
+
+          x_coord = -((intercept-640) / slope)
+
+          if x_coord < 400:
+              left_fit.append((slope, intercept))
+
+          elif x_coord > 400:
+              right_fit.append((slope, intercept))
+              
+      # 평균 선분 한개 도출
+      left_fit_average = np.mean(left_fit, 0)
+      right_fit_average = np.mean(right_fit, 0)
+      
+      # 좌표 추출
+      left_line = make_coordinates(img, left_fit_average)
+      right_line = make_coordinates(img, right_fit_average)
+
+      return [left_line], [right_line]
+```
+#### 이 함수에 img2와 lines를 대입하여 return값을 받습니다.
+```
+  l1, l2 = average_slope_intercept(img2, lines)
+```
+### 2-5. line 그리기
+#### OpenCV 에는 화면에 다양한 도형 및 직선을 그릴 수 있는 기본 함수를 제공합니다.
+#### `cv2.line(image, (x1, y1), (x2, y2), (B, G, R), line_thickness)` 함수로 쉽게 그릴 수 있습니다.
+#### 다만 라인을 그릴 화면은 원본 이미지 위에 바로 덧칠하는게 아니라 비어있는 이미지 위에 그린 뒤 원본 위에 덮어씌울 것입니다.
+#### 반투명하게 위에 덮어 원본의 형태를 남기기 위한 작업 입니다.
+```
+  def display_lines(img, lines):
+      line_image = np.zeros_like(img)
+
+      if lines is not None:
+          for line in lines:
+              x1, y1, x2, y2 = line.reshape(4)
+              cv2.line(line_image, (x1, y1), (x2, y2), (255, 0, 0), 20)
+
+      return line_image
+```
+#### 여기에 사용될 lines는 l1, l2 각각 한번씩 적용하고 각각 따로 저장합니다.
+```
+  left_line_image = display_lines(img2, np.array(l1))
+  right_line_image = display_lines(img2, np.array(l2))
+```
+#### 이제 `cv2.addWeighted()`함수를 이용하여 해당 라인 이미지와 원본 이미지를 합칩니다.
+```
+  line_image = cv2.addWeighted(left_line_image, 1, right_line_image, 1, 1)
+
+  combo_image = cv2.addWeighted(img2, 1, line_image, 0.6, 1)
+```
+#### line_image 는 각각 좌, 우측 라인이미지를 합한 것,
+#### combo_image 는 line_image 와 img2 의 이미지를 합친 것입니다.
+#### combo_image 에서 0.6 에 해당하는 부분이 line_image를 반투명하게 설정한 것입니다. 1 일 때 완전 불투명입니다.
+### 2-6. 결과 확인하기
+#### 눈으로 보이는 결과를 이용하여 차선의 방향, 차량이 가야하는 방향을 출력해보았습니다.
+```
+  x2_coord_average = (l2[0][2] + l1[0][2]) / 2
+
+  turning_rate = x2_coord_average - 400
+
+  if turning_rate < -10:
+      print("left")
+  elif turning_rate > 10:
+      print("right")
+  else:
+      print("straight")
+```
+#### 좌, 우측의 x2 좌표값의 평균을 기준으로 중앙에서 벗어난 정도를 체크했습니다.
+#### 결과 정상적으로 출력이 됩니다.
+## 3. 결과
+#### 모든 작업이 끝났다면 종료를 시행해야 합니다.
+#### 종료되지 않는 무한 루프를 이용했기 때문에 키보드 입력값을 이용해 해당 루프를 종료하는 문장을 만들어줍니다.
+```
+  if cv2.waitKey(1) & 0xFF == 27:
+    break
+```
+#### 입력된 KeyChar 값이 27 (esc) 이면 루프를 벗어나게 설정했습니다.
+#### 루프를 탈출 했을 때 비디오 혹은 카메라의 접속을 해제하고 켜져있는 모든 윈도우를 종료하게 합니다.
+```
+  cv2.destroyAllWindows()
+  cap.release()
+```
+### 최종 코드
+```
+import cv2
+import numpy as np
+import time
+
+
+def make_coordinates(img, line_parameters):
+    slope, intercept = line_parameters
+
+    y1 = img.shape[0]
+    y2 = int(y1 * (1/2))
+
+    x1 = int((y1 - intercept)/slope)
+    x2 = int((y2 - intercept)/slope)
+
+    return np.array([x1, y1, x2, y2])
+
+
+def average_slope_intercept(img, lines):
+
+    left_fit = []
+    right_fit = []
+
+    for line in lines:
+        x1, y1, x2, y2 = line.reshape(4)
+
+        x = np.array([x1, x2])
+        y = np.array([y1, y2])
+        A = np.vstack([x, np.ones(len(x))]).T
+
+        slope, intercept = np.linalg.lstsq(A, y, rcond=None)[0]
+
+        x_coord = -((intercept-640) / slope)
+
+        if x_coord < 400:
+            left_fit.append((slope, intercept))
+
+        elif x_coord > 400:
+            right_fit.append((slope, intercept))
+
+    left_fit_average = np.mean(left_fit, 0)
+    right_fit_average = np.mean(right_fit, 0)
+    
+    left_line = make_coordinates(img, left_fit_average)
+    right_line = make_coordinates(img, right_fit_average)
+
+    return [left_line], [right_line]
+
+
+def display_lines(img, lines):
+    line_image = np.zeros_like(img)
+
+    if lines is not None:
+        for line in lines:
+            x1, y1, x2, y2 = line.reshape(4)
+            cv2.line(line_image, (x1, y1), (x2, y2), (255, 0, 0), 20)
+
+    return line_image
+
+
+def make_canny(img):
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    _, binary = cv2.threshold(gray, 197, 255, cv2.THRESH_BINARY)
+    binary_gaussian = cv2.adaptiveThreshold(binary, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 5)
+    blur = cv2.GaussianBlur(binary_gaussian, (5, 5), 0)
+    blur = cv2.bilateralFilter(blur, 9, 75, 75)
+
+    canny_image = cv2.Canny(blur, 80, 120)
+
+    return canny_image
+
+
+cap = cv2.VideoCapture('project_video.mp4')
+last_time = time.time()
+
+h = 640
+w = 800
+pts1 = np.float32([[300, 650], [580, 460], [720, 460], [1100, 650]])
+pts2 = np.float32([[200, 640], [200, 0], [600, 0], [600, 640]])
+M = cv2.getPerspectiveTransform(pts1, pts2)
+
+while(True):
+    ret, frame = cap.read()
+    img2 = cv2.warpPerspective(frame, M, (w, h), borderValue=(255, 255, 255))
+
+    try:
+        canny = make_canny(img2)
+        lines = cv2.HoughLinesP(canny, 3, np.pi/180, 100, np.array([]), 100, 400)
+        
+        x2_coord_average = (l2[0][2] + l1[0][2]) / 2
+
+        turning_rate = x2_coord_average - 400
+
+        if turning_rate < -10:
+            print("left")
+        elif turning_rate > 10:
+            print("right")
+        else:
+            print("straight")
+
+        left_line_image = display_lines(img2, np.array(l1))
+        right_line_image = display_lines(img2, np.array(l2))
+
+        line_image = cv2.addWeighted(left_line_image, 1, right_line_image, 1, 1)
+
+        combo_image = cv2.addWeighted(img2, 1, line_image, 0.6, 1)
+
+        print('Frame took{}'.format(time.time() - last_time))
+        last_time = time.time()
+        cv2.imshow('result', combo_image)
+
+    except:
+        pass
+
+    if cv2.waitKey(1) & 0xFF == 27:
+        break
+
+cv2.destroyAllWindows()
+cap.release()
+```
+### 이상입니다.
+## 감사합니다.
