@@ -8,12 +8,14 @@
 #### OpenCV 4.1.2 ver
 #### 기타 라이브러리 matplotlib, numpy, time 등
 #### PyCharm 가상환경
+![screenshots python.png](https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/python.png)
+![screenshots opencv.png](https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/opencv.png)
 ----------
 # Lane_Tracing
 ### 자율주행의 핵심 기술이 되는 차선인식 및 추적기술 입니다.
 #### 실제 자율주행자동차의 경우 Lidar 센서, Radar 센서 등을 다양한 방법을 이용하여 정확하고 많은 정보를 수용하는 방법을 이용하지만 
 #### 이 프로젝트의 경우 기능 구현에 초점을 맞추었기 때문에 카메라를 통해 간단하게 기능을 구현하였습니다.
-
+![screenshots autu_drive.png](https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/auto_drive.jpg)
 ## opencv 라이브러리 설치
 #### pip 명령어를 이용하여 설치가 가능합니다.
 ### 단, Linux OS 라면 다른 방법을 이용해야 합니다.
@@ -65,7 +67,7 @@
     
     cv2.imshow('result', frame)
 ```
-
+![screenshots 1.video_capture.png](https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/1.video_capture.png)
 #### 정상적으로 영상이 잘 출력됩니다.
 ### 1-3. Frame Delay Check
 #### time 라이브러리를 이용하여 쉽게 체크가 가능합니다.
@@ -87,7 +89,7 @@
     last_time = time.time()
 ```
 ###### `(time.time() - last_time)/60` 으로 하면 fps 체크가 가능합니다.
-
+![screenshots 2.time.time().png](https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/2.time.time().PNG)
 
 ## 2. 차선 검출
 ### 2-1. 이미지 전처리
@@ -97,6 +99,7 @@
   gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 ```
 #### `image`를 BGR을 GRAY Scale로 변환합니다.
+
 #### 조금 더 처리하기 쉽게 1차원 데이터를 이진화 하였습니다.
 ```
   _, binary = cv2.threshold(gray, 197, 255, cv2.THRESH_BINARY)
@@ -151,6 +154,10 @@
     print("frame took: {}".format(time.time() - last_time))
     last_time = time.time()
 ```
+![screenshots 3.gray.png](https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/3.gray.png)
+![screenshots 4.binary.png](https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/4.binary.png)
+![screenshots 5.blur.png](https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/5.blur.png)
+![screenshots 6.canny.png](https://github.com/Beomgu-Cho/Auto_Lane_Tracing/blob/main/capture/6.canny.png)
 ### 2-3. Region Of Interest
 #### 관심 영역을 지정합니다.
 #### 대부분의 경우 관심영역 외의 부분을 빈공간으로 처리하는 경우가 대부분이었는데 이 경우 라인의 각도가 조금밖에 이루어지지 않는 것같아 최대한 실제 라인과 비슷한 환경을 만들어 주기 위해 위에서 바라보는 화면을 만들어 주었습니다.
